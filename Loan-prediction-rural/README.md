@@ -74,7 +74,7 @@ A **production-ready machine learning system** for assessing loan eligibility in
 | Dataset | Source Table | Records | Features | Description |
 |---------|-------------|---------|----------|-------------|
 | **Labeled Loan Data** | `workspace.default.loan_data_df` | 480 | 12 | Historical loan applications with approval status |
-| **Rural Socio-Economic** | `workspace.default.processed_data` | N/A | 21 | Rural demographics, income, infrastructure scores |
+| **Rural Socio-Economic** | `workspace.default.processed_data` | 40,000 | 21 | Rural demographics, income, infrastructure scores |
 | **Training Set** | Split (80%) | 384 | 16 | Engineered features for model training |
 | **Test Set** | Split (20%) | 96 | 16 | Holdout set for final evaluation |
 
