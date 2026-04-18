@@ -1,4 +1,4 @@
-"""# 🏦 Digital-Artha: AI-Powered Loan Eligibility System for Rural India
+# 🏦 Digital-Artha: AI-Powered Loan Eligibility System for Rural India
 
 ## 🎯 Project Overview
 
@@ -461,31 +461,6 @@ print(result)
 - [x] JSON metadata with performance metrics
 - [x] Production-ready inference function
 - [x] Accessible by multiple team members
-
----
-
-## 🚧 Deployment Status
-
-### ⚠️ MLflow Model Registry (Pending)
-- ✅ Model artifacts saved locally and in shared workspace
-- ⏳ MLflow registration requires classic compute cluster
-- ⏳ Serverless compute does not support MLflow Model Registry
-
-**Why classic compute is needed:**
-- Serverless has MLflow tracking limitations
-- Model Registry requires configured `spark.mlflow.modelRegistryUri`
-- Classic compute has full MLflow + Unity Catalog integration
-
-### 📋 Next Steps for Serving Endpoint
-
-1. **Create classic compute cluster** (any size)
-2. **Attach notebook** to classic cluster
-3. **Run Cell 92** to register model to Unity Catalog
-4. **Navigate to Machine Learning → Models**
-5. **Create serving endpoint**:
-   - Endpoint name: `digital-artha-loan-eligibility`
-   - Compute: Small (CPU) or Medium
-   - Enable scale-to-zero for cost savings
 
 ---
 
