@@ -703,23 +703,6 @@ This project is built for financial inclusion in rural India. Educational and no
 
 ---
 
-## 📞 Contact & Support
-
-For questions or collaboration:
-- Open an issue in the repository
-- Contact team members via IIT Indore email
-- Check Databricks workspace for latest updates
-
----
-
-**⭐ Star this repo if you found it useful!**
-
-**🐛 Found a bug? Open an issue!**
-
-**💡 Have suggestions? Submit a PR!**
-
----
-
 ## 📊 Quick Stats
 
 | Metric | Value |
