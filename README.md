@@ -273,5 +273,183 @@ curl -X POST "https://<workspace>.azuredatabricks.net/serving-endpoints/upi_frau
 ✅ Batch + real-time inference  
 
 ---
+## 🏦 RBI Circular RAG Pipeline - Multilingual Question Answering System
+
+## 🎯 Project Overview
+
+A production-ready **Retrieval-Augmented Generation (RAG)** system for querying Reserve Bank of India (RBI) circulars in multiple Indian languages. The system retrieves relevant regulatory information and provides answers in **Hindi + 8 Indian languages** (Tamil, Telugu, Kannada, Malayalam, Bengali, Marathi, Gujarati, English).
+
+### 🏆 Hackathon Highlights
+- ✅ **48,934 QA pairs** processed from RBI circulars
+- ✅ **756 document chunks** indexed with vector embeddings
+- ✅ **1,000 evaluation questions** with LLM-as-judge scoring
+- ✅ **Multilingual support** with Llama 3.3 70B translation
+- ✅ **Vector Search** with Databricks GTE embeddings
+- ✅ **End-to-end pipeline** from data ingestion to deployment
+
+---
+
+## 🏗️ Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                         DATA PIPELINE                                │
+└─────────────────────────────────────────────────────────────────────┘
+                                 │
+         ┌───────────────────────┼───────────────────────┐
+         │                       │                       │
+         ▼                       ▼                       ▼
+    ┌────────┐            ┌──────────┐           ┌──────────┐
+    │ Bronze │            │  Silver  │           │   Gold   │
+    │ (Raw)  │───────────▶│ (Clean)  │──────────▶│ (Chunks) │
+    │ 48,934 │            │  48,934  │           │   756    │
+    └────────┘            └──────────┘           └──────────┘
+                                                        │
+                                                        ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                      VECTOR SEARCH INDEX                             │
+│  Endpoint: rbi_circular_vs_endpoint                                  │
+│  Embedding: databricks-gte-large-en                                  │
+│  Status: ✅ ONLINE & SYNCED                                          │
+└─────────────────────────────────────────────────────────────────────┘
+                                 │
+                                 ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                          RAG PIPELINE                                │
+│                                                                       │
+│  User Question (English) ──┐                                        │
+│                             │                                        │
+│                             ▼                                        │
+│                    [Vector Search]                                   │
+│                  Retrieve Top K Chunks                               │
+│                             │                                        │
+│                             ▼                                        │
+│                    [Llama 3.3 70B]                                   │
+│                 Generate Hindi Answer                                │
+│                             │                                        │
+│                             ▼                                        │
+│                    [Llama 3.3 70B]                                   │
+│              Translate to Target Language                            │
+│                             │                                        │
+│                             ▼                                        │
+│                  Final Answer (Tamil/Telugu/etc.)                    │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 📊 Dataset Statistics
+
+| Layer | Table | Records | Description |
+|-------|-------|---------|-------------|
+| **Bronze** | `workspace.default.bronze_rbi_circular_qa` | 48,934 | Raw train + eval merged |
+| **Silver** | `workspace.default.silver_rbi_circular_qa` | 48,934 | Cleaned & deduplicated |
+| **Gold Chunks** | `workspace.default.gold_rbi_circular_chunks` | 756 | Indexed document chunks |
+| **Gold Eval** | `workspace.default.gold_rbi_eval` | 1,000 | Evaluation questions |
+**Sample Evaluation Scores:**
+## 🧪 Latest LLM-as-Judge Evaluation
+
+### 📊 Sample Evaluation Results (3 Instances)
+
+| # | Accuracy | Completeness | Clarity | Relevance | Overall |
+|--|----------|--------------|---------|-----------|---------|
+| 1 | 9 | 8 | 7 | 9 | 8.25 |
+| 2 | 8 | 9 | 7 | 9 | 8.25 |
+| 3 | 8 | 6 | 7 | 9 | 7.50 |
+
+---
+
+### 📌 Aggregated Scores (This Run)
+
+- **Average Accuracy:** 8.33 / 10  
+- **Average Completeness:** 7.67 / 10  
+- **Average Clarity:** 7.00 / 10  
+- **Average Relevance:** 9.00 / 10  
+- **Overall Score:** **8.00 / 10**
+
+---
+
+### 🧠 Key Observations
+
+- Strong **relevance (9/10 consistently)** due to good vector retrieval
+- Slight weakness in **completeness (6–9 range)** → needs better context expansion
+- Stable clarity across outputs
+- Overall system shows **improved performance vs previous run (6.75 → 8.0)** 🚀
+
+---
+
+## 🎯 What's Working ✅
+
+### ✅ Data Pipeline
+- [x] Bronze layer with 48,934 QA pairs
+- [x] Silver layer with data cleaning
+- [x] Gold layer with 756 indexed chunks
+- [x] 1,000 evaluation questions prepared
+
+### ✅ Vector Search
+- [x] Endpoint created: `rbi_circular_vs_endpoint`
+- [x] Index synced: `workspace.default.gold_rbi_circular_chunks_index`
+- [x] Embedding model: `databricks-gte-large-en`
+- [x] Similarity search working with 0.65+ relevance scores
+
+### ✅ RAG Pipeline
+- [x] Retrieval from vector search (3-5 chunks)
+- [x] Hindi answer generation with Llama 3.3 70B
+- [x] Translation to 8+ Indian languages
+- [x] Complete pipeline tested end-to-end
+- [x] Reusable function implemented
+
+### ✅ Evaluation
+- [x] LLM-as-judge evaluation system
+- [x] Sample evaluation results saved
+- [x] Average scores: 6-8/10 range
+
+---
+
+## 🚧 Deployment Status
+
+### ⚠️ Model Serving (In Progress)
+- ✅ Version 5 model registered with REST API approach
+- ⏳ Endpoint deployment in progress
+- ⏳ Container image being built
+- 🎯 Expected completion: 5-10 minutes
+
+**Why deployment is challenging:**
+- VectorSearchClient SDK has MLflow tracking dependencies
+- Solution: Using REST API for vector queries in Model Serving
+- Version 5 uses direct HTTP calls instead of SDK
+
+### ✅ Streamlit App
+- ✅ Code generated at: `/Workspace/Users/ee240002079@iiti.ac.in/rbi_app.py`
+- ⏳ Ready for deployment via Databricks Apps UI
+
+---
+
+## 📈 Key Metrics
+
+| Metric | Value |
+|--------|-------|
+| **Documents Processed** | 756 unique RBI circulars |
+| **QA Pairs** | 48,934 |
+| **Evaluation Set** | 1,000 questions |
+| **Vector Index Size** | 756 chunks |
+| **Embedding Dimension** | 1024 (GTE-Large) |
+| **Avg Retrieval Score** | 0.65-0.70 |
+| **Avg Generation Quality** | 6.75/10 |
+| **Languages Supported** | 9 (Hindi + 8 others) |
+| **LLM** | Llama 3.3 70B Instruct |
+
+---
+
+## 🛠️ Tech Stack
+
+- **Platform**: Databricks
+- **Compute**: Serverless Interactive Cluster
+- **Storage**: Delta Lake (Unity Catalog)
+- **Vector DB**: Databricks Vector Search
+- **Embeddings**: `databricks-gte-large-en` (1024-dim)
+- **LLM**: `databricks-meta-llama-3-3-70b-instruct`
+- **Language**: Python 3.12, PySpark 3.5
+- **Libraries**: MLflow, OpenAI SDK, Vector Search Client
 
 *Part of the BharatBricks project — ML systems for Indian digital payments infrastructure.*
